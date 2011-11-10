@@ -1,0 +1,176 @@
+% % %
+% % %
+% % %
+.variant [
+	.name	pdu
+
+	.option [ .name hello .type hello ]
+	.option [ .name bye .type bye ]
+
+	.option [ .name bind-request	.type bind-request ]
+	.option [ .name bind-response	.type bind-response ]
+
+	.option [ .name unbind-request	.type unbind-request ]
+	.option [ .name unbind-response	.type unbind-response ]
+
+
+	.option [ .name start-tran-request .type start-tran-request ]
+	.option [ .name start-tran-response .type start-tran-response ]
+
+	.option [ .name charge-request .type charge-request ]
+	.option [ .name charge-response .type charge-response ]
+
+	.option [ .name commit-tran-request .type commit-tran-request ]
+	.option [ .name commit-tran-response .type commit-tran-response ]
+
+	.option [ .name rollback-tran-request .type rollback-tran-request ]
+	.option [ .name rollback-tran-response .type rollback-tran-response ]
+]
+
+% % %
+% % % Common types
+% % %
+.variant [
+	.name	simple-result
+	.option	[ .name accept ]
+	.option	[ .name reject .type string ]
+
+	.option [ .name error .type string ]
+	.option	[ .name server-error .type string ]
+]
+
+% % %
+% % % In-session PDUs
+% % %
+
+% %
+% % Types
+% %
+.variant [
+	.name	prop-value
+	.option [ .name int .type int ]
+	.option [ .name bin .type binary ]
+	.option [ .name flt .type float ]
+]
+
+.record [
+	.name	prop
+	.field	[ .name key .type string ]
+	.field	[ .name value .type prop-value ]
+]
+
+.list [
+	.name	service-props-list
+	.type	prop
+]
+
+.record [
+	.name	service
+	.field	[ .name props .type service-props-list ]
+]
+
+.list [
+	.name	service-list
+	.type	service
+]
+
+.record [
+	.name	service-container
+	.field	[ .name services .type service-list ]
+]
+
+% %
+% % PDUs
+% %
+
+%
+% Start transaction
+%
+.record [
+	.name	start-tran-request
+	.field	[ .name tran-id .type binary ]
+	.field	[ .name super-tran-id .type binary .optional ]
+]
+
+.record [
+	.name	start-tran-response
+	.field	[ .name tran-id .type binary ]
+	.field	[ .name status .type simple-result ]
+]
+
+.record [
+	.name	charge-request
+	.field	[ .name tran-id .type binary ]
+	.field	[ .name container .type service-container ]
+]
+.record [
+	.name	charge-response
+	.field	[ .name tran-id .type binary ]
+	.field	[ .name container-id .type int ]
+	.field	[ .name status .type simple-result ]
+]
+
+%
+% Rollback transaction
+%
+.record [
+	.name	rollback-tran-request
+	.field	[ .name tran-id .type binary ]
+]
+
+.record [
+	.name	rollback-tran-response
+	.field	[ .name tran-id .type binary ]
+	.field	[ .name status .type simple-result ]
+]
+
+%
+% Commit transaction
+%
+.record [
+	.name	commit-tran-request
+	.field	[ .name tran-id .type binary ]
+]
+
+.record [
+	.name	commit-tran-response
+	.field	[ .name tran-id .type binary ]
+	.field	[ .name status .type simple-result ]
+]
+
+% % %
+% % % Session control PDUs
+% % %
+.record [
+	.name	hello
+	.field	[ .name server-version .type binary ]
+	.field	[ .name session-id .type binary ]
+]
+
+.record [
+	.name	bye
+	.field	[ .name reason .type binary ]
+]
+
+.record [
+	.name	bind-request
+	.field	[ .name client-id .type binary ]
+	.field	[ .name client-pw .type binary ]
+]
+
+.record [
+	.name	bind-response
+	.field	[ .name status .type simple-result ]
+]
+
+.record [
+	.name	unbind-request
+	.field	[ .name reason .type binary ]
+	.field	[ .name timeout .type int32 ]
+]
+
+.record [
+	.name	unbind-response
+]
+
+
