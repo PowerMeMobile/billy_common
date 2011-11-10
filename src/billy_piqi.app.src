@@ -1,6 +1,6 @@
 {application, billy_piqi,
  [
-  {description, ""},
+  {description, "Billy Protocol PiQi encoder/decoder"},
   {vsn, "1"},
   {registered, []},
   {applications, [
