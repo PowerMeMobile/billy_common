@@ -1,6 +1,6 @@
-{application, billy_piqi,
+{application, billy_common,
  [
-  {description, "Billy Protocol PiQi encoder/decoder"},
+  {description, "Billy Shared client and server components"},
   {vsn, "1"},
   {registered, []},
   {applications, [
