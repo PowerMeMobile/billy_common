@@ -1,5 +1,5 @@
-src/billy_protocol_piqi.erl
-piqi/billy_protocol.piqi.proto
-piqi/billy_protocol_piqi.erl
-piqi/billy_protocol_piqi.hrl
+src/billy_session_piqi.erl
+piqi/billy_session.piqi.proto
+piqi/billy_session_piqi.erl
+piqi/billy_session_piqi.hrl
 ebin

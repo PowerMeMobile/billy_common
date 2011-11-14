@@ -1,0 +1,187 @@
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+% % % %                                 % % % % % % % % % % % % % % % % %
+% % % % Billy Session Control Protocol  % % % % % % % % % % % % % % % % %
+% % % %                                 % % % % % % % % % % % % % % % % %
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+
+% % % % Preface % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+
+% The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+% NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
+% "OPTIONAL" in this document are to be interpreted as described in
+% RFC 2119.
+
+% #hello - PDU
+% <closed> - TCP-connection state
+% {negotiating} - Protocol FSM's state
+% *Server*, *Client* - peer roles in protocol
+
+
+% % % % States description  % % % % % % % % % % % % % % % % % % % % % % % 
+
+% State {negotiating}:
+% 	The Client is awaiting for #hello from Server.
+% 	Server MUST report the timeout it is going to wait till #bind_request 
+%	comes from Client (#hello.bind_request_timeout).
+%	
+% 	Server MUST report session ID (#hello.session_id). 
+%	Session ID is a 128bit binary (UUID).
+%	
+% 	Server MAY report its version (#hello.server_version).
+%
+% 	Once Server sends #hello session proceeds to the state {unbound}.
+%
+% 	Any of the peers MAY send #bye and close the connection in this state.
+
+% State {unbound}:
+% 	Client MUST send #bind_request within the #hello.bind_request_timeout
+%	period since #hello PDU.
+%	
+% 	Client MUST set the fields #bind_request.client_id and 
+%	#bind_request.client_pw.
+%
+% 	Once Client sends #bind_request session proceeds to the state 
+%	{binding}.
+%
+% 	If #hello.bind_request_timeout expires Server SHOULD send #bye and 
+%	close the connection.
+%
+% 	Any of the peers MAY send #bye and close the connection in this state.
+
+% State {binding}:
+% 	Server SHALL send #bind_response with 'result' field REQUIRED 
+%	(#bind_response.result).
+%
+% 	Once Server sends #bind_response the session depending on 'result' 
+%	proceeds to one of the following:
+% 		* {bound} - when 'result' is 'accept';
+% 		* {unbound} - when 'result' is 'reject'.
+%	
+% 	Both of the peers SHOULD NOT send #bye and close connection during 
+%	this state. 
+
+% State {bound}:
+%	Server and 
+%	
+% 	Once Client sends #unbind_request session proceeds to the state 
+%	{unbinding}.
+% 	Once Server sends #require_unbind session proceeds to the state 
+%	{required_unbind}.
+%
+% 	Both of the peers SHOULD NOT send #bye and close connection during 
+%	this state.
+
+% State {unbinding}:
+% 	Server SHOULD send #unbind_response with 'result' field REQUIRED 
+%	(#unbind_response.result).
+%
+% 	Once Server sends #unbind_response the session depending on 'result'
+%	proceeds to one of the following:
+% 		* {unbound} - when 'result' is 'accept'
+% 		* {unbound} - when 'result' is 'reject'
+%	
+% 	Both of the peers SHOULD NOT send #bye and close connection during 
+%	this state.
+
+% All states:
+% 	In case of protocol-violation by the peer the host SHOULD send #bye
+% 	with the field 'reason' set to 'protocol-error'
+	 
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
+
+
+.variant [
+	.name	pdu
+	.option [ .name hello .type hello ]
+	.option [ .name bye	.type bye ]
+	.option [ .name bind-request .type bind-request ]
+	.option [ .name bind-response .type bind-response ]
+	.option [ .name require-unbind .type require-unbind ]
+	.option [ .name unbind-request .type unbind-request ]
+	.option [ .name unbind-response .type unbind-response ]
+]
+
+.enum [
+	.name session-state-name
+	.option [ .name st-negotiating ]
+	.option [ .name st-unbound ]
+	.option [ .name st-binding ]
+	.option [ .name st-bound ]
+	.option [ .name st-unbinding ]
+]
+
+% % % HELLO % % %
+.record [
+	.name hello
+	.field [ .name session-id .type binary ]
+	.field [ .name bind-request-timeout .type int ]
+	.field [ .name server-version .type binary .optional ]
+]
+
+% % % BYE % % %
+.record [
+	.name bye
+	.field [ .name state-name .type session-state-name ]
+	.field [ .name reason .type bye-reason ]
+	.field [ .name reason-long .type binary .optional ]
+]
+	.variant [
+		.name bye-reason
+		.option [ .name normal ]
+		.option [ .name internal-error ]
+		.option [ .name protocol-error ]
+		.option [ .name custom .type binary ]
+	]
+
+% % % BIND-REQUEST % % %
+.record [
+	.name bind-request
+	.field [ .name client-id .type binary ]
+	.field [ .name client-pw .type binary ]
+]
+
+% % % BIND-RESPONSE % % %
+.record [
+	.name bind-response
+	.field [ .name result .type bind-result ]
+]
+	.variant [
+		.name bind-result
+		.option [ .name accept ]
+		.option [ .name reject .type binary ]
+	]
+
+% % % REQUIRE-UNBIND % % %
+.record [
+	.name require-unbind
+	.field [ .name timeout .type int ]
+	.field [ .name reason .type require-unbind-reason .optional ]
+]
+	.variant [
+		.name require-unbind-reason
+		.option [ .name custom .type binary ]
+	]
+
+% % % UNBIND-REQUEST % % %
+.record [
+	.name unbind-request
+	.field [ .name reason .type unbind-reason ]
+]
+	.variant [
+		.name unbind-reason
+		.option [ .name normal ]
+		.option [ .name internal-error ]
+		.option [ .name required-by-server ]
+		.option [ .name custom .type binary ]
+	]
+
+% % % UNBIND-RESPONSE % % %
+.record [
+	.name unbind-response
+	.field [ .name bind-request-timeout .type int ]
+]
+
+
+
