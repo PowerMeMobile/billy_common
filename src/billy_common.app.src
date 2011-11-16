@@ -1,7 +1,7 @@
 {application, billy_common,
  [
   {description, "Billy Shared client and server components"},
-  {vsn, "1"},
+  {vsn, "0.1.0"},
   {registered, []},
   {applications, [
                   kernel,
