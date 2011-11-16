@@ -5,7 +5,8 @@
   {registered, []},
   {applications, [
                   kernel,
-                  stdlib
+                  stdlib,
+                  piqi
                  ]},
   {mod, {billy_common_app, []}},
   {env, []}
