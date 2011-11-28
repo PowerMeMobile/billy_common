@@ -1,0 +1,62 @@
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+% % % %                                     % % % % % % % % % % % % % % %
+% % % % Billy Transaction Control Protocol  % % % % % % % % % % % % % % %
+% % % %                                     % % % % % % % % % % % % % % %
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+
+% % % % Preface % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+
+% The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+% NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
+% "OPTIONAL" in this document are to be interpreted as described in
+% RFC 2119.
+
+% #hello - PDU
+% <closed> - TCP-connection state
+% {negotiating} - Protocol FSM's state
+% *Server*, *Client* - peer roles in protocol
+
+% % % BEGIN TRANSACTION % % %
+.record [
+	.name	begin-request
+	.field	[ .name id .type int ]
+	.field	[ .name	cid .type int ]
+]
+
+.record [
+	.name	begin-response
+	.field	[ .name	id .type int ]
+	.field	[ .name result .type begin-result ]
+]
+	.variant [
+		.name	begin-result
+		.option	[ .name accept ]
+		.option [ .name reject .type binary ]
+	]
+
+
+% % % RESERVE % % %
+.record	[
+	.name	reserve-request
+	.field	[ .name	id .type int ]
+	.field	[ .name services-list .type service .repeated ]
+]
+	.record [
+		.name	service
+		.field	[ .name service-type .type binary ]
+		.field	[ .name quantity .type int ]
+	]
+
+% % % ROLLBACK % % %
+.record [
+	.name	rollback-request
+	.field	[ .name id .type int ]
+]
+
+% % % COMMIT % % %
+.record [
+	.name	commit-request
+	.field	[ .name id .type int ]
+]
+
+
