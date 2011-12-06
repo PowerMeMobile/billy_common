@@ -21,48 +21,52 @@
 % Server is awaiting for #reserve-request from Client.
 % Client MUST set the fields transaction ID (#reserve-request.tranid),
 % customer ID (#reserve-request.cid), container for reserving
-% (#reserv-request.container).
+% (#reserve-request.container).
 % Transaction ID is a 128bit binary (UUID).
+% %
+% % RG: Could we use a sequential integer here? 
+% %     It will be unique within any particular session and the global 
+% %     (within whole server) transaction identifier will consist of a tuple - {Session, SeqId}.
 
-% Once Server get #reserve-request from Clien, it MUST
+% Once Server gets #reserve-request from Clien, it MUST
 % 	create new transaction process,
 % 	send #reserve-response to Client
 %	and go to state {reserved}.
 % Server MUST report result of reserving (#reserve-response.result)
 % to Client.
-% Server MUST report transaction ID (#reserve-response.tranid).
+% Server MUST set the field transaction ID (#reserve-response.tranid).
 
 % State {reserved}:
 % The Server is awaiting for #commit-request or 
 % #rollback-request from the Client.
 
 % The Server closes transaction when timeout expires, unless the
-% server receives either of the messages above ('#commit-request'
+% server receives either of the following messages ('#commit-request'
 % or '#rollback-request').
 
-% Client MUST send #rollback-reques or #commit-request.
+% Client SHOULD send #rollback-reques or #commit-request within the timeout.
 % Client MUST set field transaction ID
 % (#rollback-request.tranid or #commit-request.tranid).
 
 % The Server MUST send response #commit-response or
 % #rollback-response respectively.
-% Once Server sends response transaction closes.
+% Once Server sends response transaction is closed.
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
 
 .variant [
 	.name transaction
-	.option [ .name reserv-request .type reserv-request ]
-	.option [ .name reserv-response .type reserv-response ]
+	.option [ .name reserve-request .type reserve-request ]
+	.option [ .name reserve-response .type reserve-response ]
 	.option [ .name commit-request .type commit-request ]
 	.option [ .name commit-response .type commit-response ]
 	.option [ .name rollback-request .type rollback-request ]
 	.option [ .name rollback-response .type rollbacl-response ]
 ]
 
-% % % RESERV-REQUEST % % %
+% % % RESERVE-REQUEST % % %
 .record [
-	.name reserv-request
+	.name reserve-request
 	.field [ .name transacrion-id .type binary ]
 	.field [ .name customer-id .type int ]
 	.field [ .name svc_container .type svc_container ]
@@ -70,16 +74,11 @@
 
 .record [
 	.name svc_container
-	.field [ .name details .type details ]
-]
-
-.list [
-	.name details
-	.type packadge
+	.field [ .name details .type svc_details .repeated ]
 ]
 
 .record [
-	.name packadge
+	.name svc_details % % 
 	.field [ .name svc_type_id .type binary ]
 	.field [ .name svc_details .type svc_details ]
 ]
@@ -89,14 +88,15 @@
 	.field [ .name quantity .type int ]
 ]
 
-% % % RESERV-RESPONSE % % %
+% % % RESERVE-RESPONSE % % %
 .record [
-	.name reserv-response
+	.name reserve-response
 	.field [ .name transaction-id .type binary ]
-	.field [ .name result .type reserv-result ]
+	.field [ .name result .type reserve-result ]
+	.field [ .name timeout .type int ] % [ms]
 ]
 	.variant [
-		.name reserv-result
+		.name reserve-result
 		.option [ .name accepted ]
 		.option [ .name rejected ]
 		.option [ .name custom .type binary ]
@@ -135,3 +135,10 @@
 		.name rollback-result
 		.option [ .name rolledback ]
 	]
+
+
+% % RG: Please mind here that the transactions can run independently within a single session.
+% %     Nothing said about the timeout in the {reserved} state: see the field i've added to #reserve-response.
+% %     The client should be able to order a shorter timeout than the server's default one.
+% %     Server should reject setting the timeout greater than it's maximum one. 
+% %     (Please ensure you understand the difference between the default and maximum timeout)
