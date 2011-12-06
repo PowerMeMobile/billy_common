@@ -24,14 +24,10 @@
 % customer ID (#reserve-request.cid), container for reserving
 % (#reserve-request.container).
 % Client MAY set #reserve-request.timeout. 
-% Transaction ID is a tuple - {Session, SeqId}, where SeqId is
-% sequential integer and Session is a session process ID.
-% %
-% % RG: Could we use a sequential integer here? 
-% %     It will be unique within any particular session and the global 
-% %     (within whole server) transaction identifier will consist of a tuple - {Session, SeqId}.
+% Transaction ID is a sequentially growing integer number unique within the particular session.
+% Thus any particular transaction is globally identified by a tuple - {SessionID, TransactionID}
 
-% Once Server gets #reserve-request from Clien, it MUST
+% Once Server gets #reserve-request from Client, it MUST
 % 	create new transaction process,
 % 	send #reserve-response to Client
 %	and go to state {reserved}.
@@ -60,6 +56,7 @@
 % The Server MUST send response #commit-response or
 % #rollback-response respectively.
 % Once Server sends response transaction is closed.
+% Any further reference of the closed transaction id is a protocol violation.
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
 
