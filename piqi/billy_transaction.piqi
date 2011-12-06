@@ -1,0 +1,137 @@
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+% % % %                               		% % % % % % % % % % % % % % %
+% % % % Billy Transaction Control Protocol  % % % % % % % % % % % % % % %
+% % % %                               		% % % % % % % % % % % % % % %
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
+
+% % % % Preface % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+
+% The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+% NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
+% "OPTIONAL" in this document are to be interpreted as described in
+% RFC 2119.
+
+% #reserve-request - PDU
+% <closed> - TCP-connection state
+% {reserved} - Protocol FSM's state
+% *Server*, *Client* - peer roles in protocol
+
+% % % % States description  % % % % % % % % % % % % % % % % % % % % % % % 
+
+% Server is awaiting for #reserve-request from Client.
+% Client MUST set the fields transaction ID (#reserve-request.tranid),
+% customer ID (#reserve-request.cid), container for reserving
+% (#reserv-request.container).
+% Transaction ID is a 128bit binary (UUID).
+
+% Once Server get #reserve-request from Clien, it MUST
+% 	create new transaction process,
+% 	send #reserve-response to Client
+%	and go to state {reserved}.
+% Server MUST report result of reserving (#reserve-response.result)
+% to Client.
+% Server MUST report transaction ID (#reserve-response.tranid).
+
+% State {reserved}:
+% The Server is awaiting for #commit-request or 
+% #rollback-request from the Client.
+
+% The Server closes transaction when timeout expires, unless the
+% server receives either of the messages above ('#commit-request'
+% or '#rollback-request').
+
+% Client MUST send #rollback-reques or #commit-request.
+% Client MUST set field transaction ID
+% (#rollback-request.tranid or #commit-request.tranid).
+
+% The Server MUST send response #commit-response or
+% #rollback-response respectively.
+% Once Server sends response transaction closes.
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
+
+.variant [
+	.name transaction
+	.option [ .name reserv-request .type reserv-request ]
+	.option [ .name reserv-response .type reserv-response ]
+	.option [ .name commit-request .type commit-request ]
+	.option [ .name commit-response .type commit-response ]
+	.option [ .name rollback-request .type rollback-request ]
+	.option [ .name rollback-response .type rollbacl-response ]
+]
+
+% % % RESERV-REQUEST % % %
+.record [
+	.name reserv-request
+	.field [ .name transacrion-id .type binary ]
+	.field [ .name customer-id .type int ]
+	.field [ .name svc_container .type svc_container ]
+]
+
+.record [
+	.name svc_container
+	.field [ .name details .type details ]
+]
+
+.list [
+	.name details
+	.type packadge
+]
+
+.record [
+	.name packadge
+	.field [ .name svc_type_id .type binary ]
+	.field [ .name svc_details .type svc_details ]
+]
+
+.record [
+	.name svc_details
+	.field [ .name quantity .type int ]
+]
+
+% % % RESERV-RESPONSE % % %
+.record [
+	.name reserv-response
+	.field [ .name transaction-id .type binary ]
+	.field [ .name result .type reserv-result ]
+]
+	.variant [
+		.name reserv-result
+		.option [ .name accepted ]
+		.option [ .name rejected ]
+		.option [ .name custom .type binary ]
+	]
+
+% % % COMMIT-REQUEST % % %
+.record [
+	.name commit-request
+	.field [ .name transacrion-id .type binary ]
+]
+
+% % % COMMIT-RESPONSE % % %
+.record [
+	.name commit-response
+	.field [ .name transacrion-id .type binary ]
+	.field [ .name result .type commit-result ]
+]
+	.variant [
+		.name commit-result
+		.option [ .name commited ]
+	]
+
+% % % ROLLBACK-REQUEST % % %
+.record [
+	.name rollback-request
+	.field [ .name transacrion-id .type binary ]
+]
+
+% % % ROLLBACK-RESPONSE % % %
+.record [
+	.name rollback-response
+	.field [ .name transacrion-id .type binary ]
+	.field [ .name result .type rollback-result ]
+]
+	.variant [
+		.name rollback-result
+		.option [ .name rolledback ]
+	]
