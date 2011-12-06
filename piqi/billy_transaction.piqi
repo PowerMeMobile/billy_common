@@ -19,10 +19,13 @@
 % % % % States description  % % % % % % % % % % % % % % % % % % % % % % % 
 
 % Server is awaiting for #reserve-request from Client.
+%
 % Client MUST set the fields transaction ID (#reserve-request.tranid),
 % customer ID (#reserve-request.cid), container for reserving
 % (#reserve-request.container).
-% Transaction ID is a 128bit binary (UUID).
+% Client MAY set #reserve-request.timeout. 
+% Transaction ID is a tuple - {Session, SeqId}, where SeqId is
+% sequential integer and Session is a session process ID.
 % %
 % % RG: Could we use a sequential integer here? 
 % %     It will be unique within any particular session and the global 
@@ -35,19 +38,25 @@
 % Server MUST report result of reserving (#reserve-response.result)
 % to Client.
 % Server MUST set the field transaction ID (#reserve-response.tranid).
+%
+% Server MUST report timeout to Client (#reserve-response.timeout).
+% Server MUST set timeout to Client value (#reserve-request.timeout)
+% if the Client timeout value isn't greater than Server's maximum one.
+% Otherwise Server MUST set timeout to it's default value.
 
 % State {reserved}:
+%
 % The Server is awaiting for #commit-request or 
 % #rollback-request from the Client.
-
+%
 % The Server closes transaction when timeout expires, unless the
 % server receives either of the following messages ('#commit-request'
 % or '#rollback-request').
-
+%
 % Client SHOULD send #rollback-reques or #commit-request within the timeout.
 % Client MUST set field transaction ID
 % (#rollback-request.tranid or #commit-request.tranid).
-
+%
 % The Server MUST send response #commit-response or
 % #rollback-response respectively.
 % Once Server sends response transaction is closed.
@@ -67,9 +76,16 @@
 % % % RESERVE-REQUEST % % %
 .record [
 	.name reserve-request
-	.field [ .name transacrion-id .type binary ]
+	.field [ .name transaction-id .type transaction-id ]
 	.field [ .name customer-id .type int ]
 	.field [ .name svc_container .type svc_container ]
+	.field [ .name timeout .type int .optional ] % [ms]
+]
+
+.record [
+	.name transaction-id
+	.field [ .name session-id .type binary ]
+	.field [ .name transaction-id .type int ]
 ]
 
 .record [
