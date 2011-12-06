@@ -148,10 +148,3 @@
 		.name rollback-result
 		.option [ .name rolledback ]
 	]
-
-
-% % RG: Please mind here that the transactions can run independently within a single session.
-% %     Nothing said about the timeout in the {reserved} state: see the field i've added to #reserve-response.
-% %     The client should be able to order a shorter timeout than the server's default one.
-% %     Server should reject setting the timeout greater than it's maximum one. 
-% %     (Please ensure you understand the difference between the default and maximum timeout)
