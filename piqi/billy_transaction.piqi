@@ -67,7 +67,7 @@
 	.option [ .name commit-request .type commit-request ]
 	.option [ .name commit-response .type commit-response ]
 	.option [ .name rollback-request .type rollback-request ]
-	.option [ .name rollback-response .type rollbacl-response ]
+	.option [ .name rollback-response .type rollback-response ]
 ]
 
 % % % RESERVE-REQUEST % % %
@@ -75,7 +75,7 @@
 	.name reserve-request
 	.field [ .name transaction-id .type transaction-id ]
 	.field [ .name customer-id .type int ]
-	.field [ .name svc_container .type svc_container ]
+	.field [ .name svc-container .type svc-container ]
 	.field [ .name timeout .type int .optional ] % [ms]
 ]
 
@@ -86,18 +86,18 @@
 ]
 
 .record [
-	.name svc_container
-	.field [ .name details .type svc_details .repeated ]
+	.name svc-container
+	.field [ .name details .type svc-packadge	 .repeated ]
 ]
 
 .record [
-	.name svc_details % % 
-	.field [ .name svc_type_id .type binary ]
-	.field [ .name svc_details .type svc_details ]
+	.name svc-packadge
+	.field [ .name svc-type-id .type binary ]
+	.field [ .name svc-details .type svc-details ]
 ]
 
 .record [
-	.name svc_details
+	.name svc-details
 	.field [ .name quantity .type int ]
 ]
 
