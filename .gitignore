@@ -3,7 +3,7 @@ piqi/billy_session.piqi.proto
 piqi/billy_session_piqi.erl
 piqi/billy_session_piqi.hrl
 ebin
-include/billy_transaction_piqi.hrl
+include/
 piqi/billy_transaction.piqi.proto
 piqi/billy_transaction_piqi.erl
 piqi/billy_transaction_piqi.hrl

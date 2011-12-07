@@ -104,7 +104,7 @@
 % % % RESERVE-RESPONSE % % %
 .record [
 	.name reserve-response
-	.field [ .name transaction-id .type binary ]
+	.field [ .name transaction-id .type transaction-id ]
 	.field [ .name result .type reserve-result ]
 	.field [ .name timeout .type int ] % [ms]
 ]
@@ -118,13 +118,13 @@
 % % % COMMIT-REQUEST % % %
 .record [
 	.name commit-request
-	.field [ .name transacrion-id .type binary ]
+	.field [ .name transaction-id .type transaction-id ]
 ]
 
 % % % COMMIT-RESPONSE % % %
 .record [
 	.name commit-response
-	.field [ .name transacrion-id .type binary ]
+	.field [ .name transaction-id .type transaction-id ]
 	.field [ .name result .type commit-result ]
 ]
 	.variant [
@@ -135,13 +135,13 @@
 % % % ROLLBACK-REQUEST % % %
 .record [
 	.name rollback-request
-	.field [ .name transacrion-id .type binary ]
+	.field [ .name transaction-id .type transaction-id ]
 ]
 
 % % % ROLLBACK-RESPONSE % % %
 .record [
 	.name rollback-response
-	.field [ .name transacrion-id .type binary ]
+	.field [ .name transaction-id .type transaction-id ]
 	.field [ .name result .type rollback-result ]
 ]
 	.variant [
