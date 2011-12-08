@@ -101,6 +101,12 @@
 	.option [ .name require-unbind .type require-unbind ]
 	.option [ .name unbind-request .type unbind-request ]
 	.option [ .name unbind-response .type unbind-response ]
+	.option [ .name data-pdu .type data-pdu ]
+]
+
+.record [
+	.name data-pdu
+	.field [ .name data-pdu .type binary ]
 ]
 
 .enum [

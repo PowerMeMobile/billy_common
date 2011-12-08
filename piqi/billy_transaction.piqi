@@ -1,8 +1,8 @@
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
-% % % %                                     % % % % % % % % % % % % % % %
+% % % %                               		% % % % % % % % % % % % % % %
 % % % % Billy Transaction Control Protocol  % % % % % % % % % % % % % % %
-% % % %                                     % % % % % % % % % % % % % % %
-% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+% % % %                               		% % % % % % % % % % % % % % %
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
 
 % % % % Preface % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 
@@ -11,52 +11,143 @@
 % "OPTIONAL" in this document are to be interpreted as described in
 % RFC 2119.
 
-% #hello - PDU
+% #reserve-request - PDU
 % <closed> - TCP-connection state
-% {negotiating} - Protocol FSM's state
+% {reserved} - Protocol FSM's state
 % *Server*, *Client* - peer roles in protocol
 
-% % % BEGIN TRANSACTION % % %
+% % % % States description  % % % % % % % % % % % % % % % % % % % % % % % 
+
+% Server is awaiting for #reserve-request from Client.
+%
+% Client MUST set the fields transaction ID (#reserve-request.tranid),
+% customer ID (#reserve-request.cid), container for reserving
+% (#reserve-request.container).
+% Client MAY set #reserve-request.timeout. 
+% Transaction ID is a sequentially growing integer number unique within the particular session.
+% Thus any particular transaction is globally identified by a tuple - {SessionID, TransactionID}
+
+% Once Server gets #reserve-request from Client, it MUST
+% 	create new transaction process,
+% 	send #reserve-response to Client
+%	and go to state {reserved}.
+% Server MUST report result of reserving (#reserve-response.result)
+% to Client.
+% Server MUST set the field transaction ID (#reserve-response.tranid).
+%
+% Server MUST report timeout to Client (#reserve-response.timeout).
+% Server MUST set timeout to Client value (#reserve-request.timeout)
+% if the Client timeout value isn't greater than Server's maximum one.
+% Otherwise Server MUST set timeout to it's default value.
+
+% State {reserved}:
+%
+% The Server is awaiting for #commit-request or 
+% #rollback-request from the Client.
+%
+% The Server closes transaction when timeout expires, unless the
+% server receives either of the following messages ('#commit-request'
+% or '#rollback-request').
+%
+% Client SHOULD send #rollback-reques or #commit-request within the timeout.
+% Client MUST set field transaction ID
+% (#rollback-request.tranid or #commit-request.tranid).
+%
+% The Server MUST send response #commit-response or
+% #rollback-response respectively.
+% Once Server sends response transaction is closed.
+% Any further reference of the closed transaction id is a protocol violation.
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
+
+.variant [
+	.name transaction
+	.option [ .name reserve-request .type reserve-request ]
+	.option [ .name reserve-response .type reserve-response ]
+	.option [ .name commit-request .type commit-request ]
+	.option [ .name commit-response .type commit-response ]
+	.option [ .name rollback-request .type rollback-request ]
+	.option [ .name rollback-response .type rollback-response ]
+	.option [ .name timeout .type timeout ]
+]
+
+% % % RESERVE-REQUEST % % %
 .record [
-	.name	begin-request
-	.field	[ .name id .type int ]
-	.field	[ .name	cid .type int ]
+	.name reserve-request
+	.field [ .name transaction-id .type int ]
+	.field [ .name customer-id .type int ]
+	.field [ .name svc-container .type svc-container ]
+	.field [ .name timeout .type int .optional ] % [ms]
 ]
 
 .record [
-	.name	begin-response
-	.field	[ .name	id .type int ]
-	.field	[ .name result .type begin-result ]
+	.name svc-container
+	.field [ .name details .type svc-package .repeated ]
+]
+
+.record [
+	.name svc-package
+	.field [ .name svc-type-id .type binary ]
+	.field [ .name svc-details .type svc-details ]
+]
+
+.record [
+	.name svc-details
+	.field [ .name quantity .type int ]
+]
+
+% % % RESERVE-RESPONSE % % %
+.record [
+	.name reserve-response
+	.field [ .name transaction-id .type int ]
+	.field [ .name result .type reserve-result ]
+	.field [ .name timeout .type int ] % [ms]
 ]
 	.variant [
-		.name	begin-result
-		.option	[ .name accept ]
-		.option [ .name reject .type binary ]
+		.name reserve-result
+		.option [ .name accepted ]
+		.option [ .name rejected .type binary ]
+		.option [ .name error .type binary ]
 	]
 
-
-% % % RESERVE % % %
-.record	[
-	.name	reserve-request
-	.field	[ .name	id .type int ]
-	.field	[ .name services-list .type service .repeated ]
+% % % COMMIT-REQUEST % % %
+.record [
+	.name commit-request
+	.field [ .name transaction-id .type int ]
 ]
-	.record [
-		.name	service
-		.field	[ .name service-type .type binary ]
-		.field	[ .name quantity .type int ]
+
+% % % COMMIT-RESPONSE % % %
+.record [
+	.name commit-response
+	.field [ .name transaction-id .type int ]
+	.field [ .name result .type commit-result ]
+]
+	.variant [
+		.name commit-result
+		.option [ .name ok ]
+		.option [ .name error .type binary ]
 	]
 
-% % % ROLLBACK % % %
+% % % ROLLBACK-REQUEST % % %
 .record [
-	.name	rollback-request
-	.field	[ .name id .type int ]
+	.name rollback-request
+	.field [ .name transaction-id .type int ]
 ]
 
-% % % COMMIT % % %
+% % % ROLLBACK-RESPONSE % % %
 .record [
-	.name	commit-request
-	.field	[ .name id .type int ]
+	.name rollback-response
+	.field [ .name transaction-id .type int ]
+	.field [ .name result .type rollback-result ]
 ]
+	.variant [
+		.name rollback-result
+		.option [ .name ok ]
+		.option [ .name error .type binary ]
+	]
 
-
+% % % TIMEOUT % % % 
+.record [
+	.name timeout
+	.field [ .name transaction-id .type int ]
+]

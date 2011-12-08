@@ -7,3 +7,8 @@ piqi/billy_transaction_piqi.erl
 piqi/billy_transaction_piqi.hrl
 src/billy_transaction_piqi.erl
 ebin
+include/
+piqi/billy_transaction.piqi.proto
+piqi/billy_transaction_piqi.erl
+piqi/billy_transaction_piqi.hrl
+src/billy_transaction_piqi.erl
