@@ -113,7 +113,6 @@
 		.option [ .name accepted ]
 		.option [ .name rejected .type binary ]
 		.option [ .name error .type binary ]
-		.option [ .name custom .type binary ]
 	]
 
 % % % COMMIT-REQUEST % % %
