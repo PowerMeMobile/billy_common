@@ -68,6 +68,7 @@
 	.option [ .name commit-response .type commit-response ]
 	.option [ .name rollback-request .type rollback-request ]
 	.option [ .name rollback-response .type rollback-response ]
+	.option [ .name timeout .type timeout ]
 ]
 
 % % % RESERVE-REQUEST % % %
@@ -150,3 +151,9 @@
 		.option [ .name ok ]
 		.option [ .name error .type binary ]
 	]
+
+% % % TIMEOUT % % % 
+.record [
+	.name timeout
+	.field [ .name transaction-id .type transaction-id ]
+]
