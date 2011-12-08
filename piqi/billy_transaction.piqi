@@ -82,11 +82,11 @@
 
 .record [
 	.name svc-container
-	.field [ .name details .type svc-packadge	 .repeated ]
+	.field [ .name details .type svc-package .repeated ]
 ]
 
 .record [
-	.name svc-packadge
+	.name svc-package
 	.field [ .name svc-type-id .type binary ]
 	.field [ .name svc-details .type svc-details ]
 ]
