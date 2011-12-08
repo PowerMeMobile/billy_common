@@ -111,7 +111,8 @@
 	.variant [
 		.name reserve-result
 		.option [ .name accepted ]
-		.option [ .name rejected ]
+		.option [ .name rejected .type binary ]
+		.option [ .name error .type binary ]
 		.option [ .name custom .type binary ]
 	]
 
@@ -129,7 +130,8 @@
 ]
 	.variant [
 		.name commit-result
-		.option [ .name commited ]
+		.option [ .name ok ]
+		.option [ .name error .type binary ]
 	]
 
 % % % ROLLBACK-REQUEST % % %
@@ -146,5 +148,6 @@
 ]
 	.variant [
 		.name rollback-result
-		.option [ .name rolledback ]
+		.option [ .name ok ]
+		.option [ .name error .type binary ]
 	]
