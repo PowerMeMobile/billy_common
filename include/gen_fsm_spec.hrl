@@ -1,3 +1,5 @@
+-ifndef(gen_fsm_spec_hrl).
+-define(gen_fsm_spec_hrl, included).
 
 -type gen_fsm_state_name() :: atom().
 -type gen_fsm_state_data() :: term().
@@ -6,7 +8,7 @@
 
 -type gen_fsm_start_args() :: term().
 
--type gen_fsm_init_result() :: 
+-type gen_fsm_init_result() ::
 		{ok,gen_fsm_state_name(),gen_fsm_state_data()}
 	|	{ok,gen_fsm_state_name(),gen_fsm_state_data(),gen_fsm_timeout()}
  	|	{ok,gen_fsm_state_name(),gen_fsm_state_data(),hibernate}
@@ -55,3 +57,5 @@
 -type gen_fsm_vsn() :: term() | {down, term()}.
 
 -spec code_change(gen_fsm_vsn(), gen_fsm_state_name(), gen_fsm_state_data(), gen_fsm_extra()) -> {ok, gen_fsm_state_name(), gen_fsm_state_data()}.
+
+-endif. % gen_fsm_spec_hrl

@@ -1,3 +1,5 @@
+-ifndef(service_hrl).
+-define(service_hrl, included).
 
 -include_lib("billy_common/include/billy_session_piqi.hrl").
 
@@ -9,9 +11,9 @@
 -type svc_details() :: #svc_details{}.
 
 -record(svc_container, {
-	details = [] :: [{ svc_type_id(), svc_details() }]
+	details = [] :: [{svc_type_id(), svc_details()}]
 }).
 
 -type svc_container() :: #svc_container{}.
 
-
+-endif. % service_hrl
