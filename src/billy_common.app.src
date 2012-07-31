@@ -5,7 +5,8 @@
 	{applications, [
 		kernel,
 		stdlib,
-		piqi
+		piqi,
+		sync
 	]},
 	{mod, {billy_common_app, []}},
 	{env, []}
