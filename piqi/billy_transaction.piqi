@@ -1,10 +1,10 @@
-% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
 % % % %                               		% % % % % % % % % % % % % % %
 % % % % Billy Transaction Control Protocol  % % % % % % % % % % % % % % %
 % % % %                               		% % % % % % % % % % % % % % %
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
 
-% % % % Preface % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+% % % % Preface % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
 
 % The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
 % NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
@@ -16,14 +16,14 @@
 % {reserved} - Protocol FSM's state
 % *Server*, *Client* - peer roles in protocol
 
-% % % % States description  % % % % % % % % % % % % % % % % % % % % % % % 
+% % % % States description  % % % % % % % % % % % % % % % % % % % % % % %
 
 % Server is awaiting for #reserve-request from Client.
 %
-% Client MUST set the fields transaction ID (#reserve-request.tranid),
-% customer ID (#reserve-request.cid), container for reserving
-% (#reserve-request.container).
-% Client MAY set #reserve-request.timeout. 
+% Client MUST set the fields transaction ID (#reserve-request.transaction-id),
+% customer ID (#reserve-request.customer-id), container for reserving
+% (#reserve-request.svc-container).
+% Client MAY set #reserve-request.timeout.
 % Transaction ID is a sequentially growing integer number unique within the particular session.
 % Thus any particular transaction is globally identified by a tuple - {SessionID, TransactionID}
 
@@ -33,7 +33,7 @@
 %	and go to state {reserved}.
 % Server MUST report result of reserving (#reserve-response.result)
 % to Client.
-% Server MUST set the field transaction ID (#reserve-response.tranid).
+% Server MUST set the field transaction ID (#reserve-response.transaction-id).
 %
 % Server MUST report timeout to Client (#reserve-response.timeout).
 % Server MUST set timeout to Client value (#reserve-request.timeout)
@@ -42,16 +42,16 @@
 
 % State {reserved}:
 %
-% The Server is awaiting for #commit-request or 
+% The Server is awaiting for #commit-request or
 % #rollback-request from the Client.
 %
 % The Server closes transaction when timeout expires, unless the
 % server receives either of the following messages ('#commit-request'
 % or '#rollback-request').
 %
-% Client SHOULD send #rollback-reques or #commit-request within the timeout.
+% Client SHOULD send #rollback-request or #commit-request within the timeout.
 % Client MUST set field transaction ID
-% (#rollback-request.tranid or #commit-request.tranid).
+% (#rollback-request.transaction-id or #commit-request.transaction-id).
 %
 % The Server MUST send response #commit-response or
 % #rollback-response respectively.
@@ -146,7 +146,7 @@
 		.option [ .name error .type binary ]
 	]
 
-% % % TIMEOUT % % % 
+% % % TIMEOUT % % %
 .record [
 	.name timeout
 	.field [ .name transaction-id .type int ]
