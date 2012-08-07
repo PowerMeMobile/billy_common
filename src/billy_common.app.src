@@ -6,7 +6,8 @@
 		kernel,
 		stdlib,
 		piqi,
-		sync
+		sync,
+		lager
 	]},
 	{mod, {billy_common_app, []}},
 	{env, []}
