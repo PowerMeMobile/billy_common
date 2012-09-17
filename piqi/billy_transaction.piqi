@@ -18,7 +18,7 @@
 
 % % % % States description  % % % % % % % % % % % % % % % % % % % % % % %
 
-% Server is awaiting for #reserve-request from Client.
+% Server is waiting for #reserve-request from Client.
 %
 % Client MUST set the fields transaction ID (#reserve-request.transaction-id),
 % customer ID (#reserve-request.customer-id), container for reserving
@@ -42,7 +42,7 @@
 
 % State {reserved}:
 %
-% The Server is awaiting for #commit-request or
+% The Server is waiting for #commit-request or
 % #rollback-request from the Client.
 %
 % The Server closes transaction when timeout expires, unless the

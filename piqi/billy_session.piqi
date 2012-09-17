@@ -1,11 +1,11 @@
 
-% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
 % % % %                                 % % % % % % % % % % % % % % % % %
 % % % % Billy Session Control Protocol  % % % % % % % % % % % % % % % % %
 % % % %                                 % % % % % % % % % % % % % % % % %
-% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
 
-% % % % Preface % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+% % % % Preface % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
 
 % The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
 % NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
@@ -18,16 +18,16 @@
 % *Server*, *Client* - peer roles in protocol
 
 
-% % % % States description  % % % % % % % % % % % % % % % % % % % % % % % 
+% % % % States description  % % % % % % % % % % % % % % % % % % % % % % %
 
 % State {negotiating}:
 % 	The Client is awaiting for #hello from Server.
-% 	Server MUST report the timeout it is going to wait till #bind_request 
+% 	Server MUST report the timeout it is going to wait till #bind_request
 %	comes from Client (#hello.bind_request_timeout).
-%	
-% 	Server MUST report session ID (#hello.session_id). 
+%
+% 	Server MUST report session ID (#hello.session_id).
 %	Session ID is a 128bit binary (UUID).
-%	
+%
 % 	Server MAY report its version (#hello.server_version).
 %
 % 	Once Server sends #hello session proceeds to the state {unbound}.
@@ -37,57 +37,57 @@
 % State {unbound}:
 % 	Client MUST send #bind_request within the #hello.bind_request_timeout
 %	period since #hello PDU.
-%	
-% 	Client MUST set the fields #bind_request.client_id and 
+%
+% 	Client MUST set the fields #bind_request.client_id and
 %	#bind_request.client_pw.
 %
-% 	Once Client sends #bind_request session proceeds to the state 
+% 	Once Client sends #bind_request session proceeds to the state
 %	{binding}.
 %
-% 	If #hello.bind_request_timeout expires Server SHOULD send #bye and 
+% 	If #hello.bind_request_timeout expires Server SHOULD send #bye and
 %	close the connection.
 %
 % 	Any of the peers MAY send #bye and close the connection in this state.
 
 % State {binding}:
-% 	Server SHALL send #bind_response with 'result' field REQUIRED 
+% 	Server SHALL send #bind_response with 'result' field REQUIRED
 %	(#bind_response.result).
 %
-% 	Once Server sends #bind_response the session depending on 'result' 
+% 	Once Server sends #bind_response the session depending on 'result'
 %	proceeds to one of the following:
 % 		* {bound} - when 'result' is 'accept';
 % 		* {unbound} - when 'result' is 'reject'.
-%	
-% 	Both of the peers SHOULD NOT send #bye and close connection during 
-%	this state. 
+%
+% 	Both of the peers SHOULD NOT send #bye and close connection during
+%	this state.
 
 % State {bound}:
-%	Server and 
-%	
-% 	Once Client sends #unbind_request session proceeds to the state 
+%	Server and
+%
+% 	Once Client sends #unbind_request session proceeds to the state
 %	{unbinding}.
-% 	Once Server sends #require_unbind session proceeds to the state 
+% 	Once Server sends #require_unbind session proceeds to the state
 %	{required_unbind}.
 %
-% 	Both of the peers SHOULD NOT send #bye and close connection during 
+% 	Both of the peers SHOULD NOT send #bye and close connection during
 %	this state.
 
 % State {unbinding}:
-% 	Server SHOULD send #unbind_response with 'result' field REQUIRED 
+% 	Server SHOULD send #unbind_response with 'result' field REQUIRED
 %	(#unbind_response.result).
 %
 % 	Once Server sends #unbind_response the session depending on 'result'
 %	proceeds to one of the following:
 % 		* {unbound} - when 'result' is 'accept'
 % 		* {unbound} - when 'result' is 'reject'
-%	
-% 	Both of the peers SHOULD NOT send #bye and close connection during 
+%
+% 	Both of the peers SHOULD NOT send #bye and close connection during
 %	this state.
 
 % All states:
 % 	In case of protocol-violation by the peer the host SHOULD send #bye
 % 	with the field 'reason' set to 'protocol-error'
-	 
+
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
 
