@@ -1,5 +1,6 @@
 -module(billy_service).
 
+%% API
 -export([
 	cont_create/0,
 	cont_ls_ids/1,
@@ -13,43 +14,40 @@
 
 -include("service.hrl").
 
+%% ===================================================================
+%% API
+%% ===================================================================
+
 -spec cont_create() -> {ok, svc_container()}.
--spec cont_ls_ids(svc_container()) -> {ok, [svc_type_id()]}.
--spec cont_rm_id(svc_container(), svc_type_id()) -> {ok, svc_container()}.
--spec cont_set_id(svc_container(), svc_type_id(), svc_details()) -> {ok, svc_container()}.
--spec cont_is_empty(svc_container()) -> boolean().
--spec cont_get_id(svc_container(), svc_type_id()) -> {ok, svc_details()} | not_present.
-
--spec det_get_qua(svc_details()) -> {ok, integer()}.
--spec det_set_qua(svc_details(), integer()) -> {ok, svc_details()}.
-
-%%% API
-
 cont_create() ->
 	{ok, #svc_container{}}.
 
-cont_ls_ids(#svc_container{ details = Details }) ->
-	IDs = [ ID || { ID, _ } <- Details ],
+-spec cont_ls_ids(svc_container()) -> {ok, [svc_type_id()]}.
+cont_ls_ids(#svc_container{details = Details}) ->
+	IDs = [ID || {ID, _} <- Details],
 	{ok, IDs}.
 
-cont_rm_id(Container = #svc_container{ details = Details }, ID) ->
+-spec cont_rm_id(svc_container(), svc_type_id()) -> {ok, svc_container()}.
+cont_rm_id(Container = #svc_container{details = Details}, ID) ->
 	DetailsNew = proplists:delete(ID, Details),
 	{ok, Container#svc_container{
 		details = DetailsNew
 	}}.
 
-cont_set_id(Container = #svc_container{ details = Details }, ID, D) ->
+-spec cont_set_id(svc_container(), svc_type_id(), svc_details()) -> {ok, svc_container()}.
+cont_set_id(Container = #svc_container{details = Details}, ID, D) ->
 	DetailsNew = case proplists:is_defined(ID, Details) of
 		true ->
-			[ {ID, D} | proplists:delete(ID, Details) ];
+			[{ID, D} | proplists:delete(ID, Details)];
 		false ->
-			[ {ID, D} | Details ]
+			[{ID, D} | Details]
 	end,
 	{ok, Container#svc_container{
 		details = DetailsNew
 	}}.
 
-cont_get_id(_Container = #svc_container{ details = Details }, ID) ->
+-spec cont_get_id(svc_container(), svc_type_id()) -> {ok, svc_details()} | not_present.
+cont_get_id(#svc_container{details = Details}, ID) ->
 	case proplists:get_value(ID, Details, undefined) of
 		undefined ->
 			not_present;
@@ -57,25 +55,27 @@ cont_get_id(_Container = #svc_container{ details = Details }, ID) ->
 			{ok, D}
 	end.
 
+-spec det_get_qua(svc_details()) -> {ok, integer()}.
+det_get_qua(#svc_details{quantity = Q}) -> {ok, Q}.
 
-det_get_qua(#svc_details{ quantity = Q}) -> {ok, Q}.
-det_set_qua(Details = #svc_details{}, Q) -> {ok, Details#svc_details{ quantity = Q }}.
+-spec det_set_qua(svc_details(), integer()) -> {ok, svc_details()}.
+det_set_qua(Details = #svc_details{}, Q) -> {ok, Details#svc_details{quantity = Q}}.
 
+-spec cont_is_empty(svc_container()) -> boolean().
 cont_is_empty(#svc_container{
 	details = Details
 }) ->
 	not details_is_any_not_empty(Details).
 
+%% ===================================================================
+%% Internal
+%% ===================================================================
 
-%%% Internal
 details_is_any_not_empty([]) -> false;
-details_is_any_not_empty([{_, #svc_details{
-	quantity = Q
-} } | SoFar]) ->
+details_is_any_not_empty([{_, #svc_details{quantity = Q}} | SoFar]) ->
 	case Q == 0 of
 		true ->
 			details_is_any_not_empty(SoFar);
 		false ->
 			true
 	end.
-
