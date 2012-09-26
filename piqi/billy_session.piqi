@@ -144,6 +144,7 @@
 % % % BIND-REQUEST % % %
 .record [
 	.name bind-request
+	.field [ .name client-type .type binary ]
 	.field [ .name client-id .type binary ]
 	.field [ .name client-pw .type binary ]
 ]
@@ -188,6 +189,3 @@
 	.name unbind-response
 	.field [ .name bind-request-timeout .type int ]
 ]
-
-
-
