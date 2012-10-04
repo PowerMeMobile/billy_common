@@ -21,18 +21,15 @@
 % Server is waiting for #reserve-request from Client.
 %
 % Client MUST set the fields transaction ID (#reserve-request.transaction-id),
-% customer ID (#reserve-request.customer-id), user ID (#reserve-request.user-id),
-% container for reserving (#reserve-request.svc-container).
+% client type (#reserve-request.client-type), customer ID (#reserve-request.customer-id),
+% user ID (#reserve-request.user-id), container for reserving (#reserve-request.svc-container).
 % Client MAY set #reserve-request.timeout.
 % Transaction ID is a sequentially growing integer number unique within the particular session.
 % Thus any particular transaction is globally identified by a tuple - {SessionID, TransactionID}
 
-% Once Server gets #reserve-request from Client, it MUST
-% 	create new transaction process,
-% 	send #reserve-response to Client
-%	and go to state {reserved}.
-% Server MUST report result of reserving (#reserve-response.result)
-% to Client.
+% Once Server gets #reserve-request from Client, it MUST create new transaction process,
+% send #reserve-response to Client and go to state {reserved}.
+% Server MUST report result of reserving (#reserve-response.result) to Client.
 % Server MUST set the field transaction ID (#reserve-response.transaction-id).
 %
 % Server MUST report timeout to Client (#reserve-response.timeout).
@@ -75,6 +72,7 @@
 .record [
 	.name reserve-request
 	.field [ .name transaction-id .type int ]
+	.field [ .name client-type .type binary ]
 	.field [ .name customer-id .type binary ]
 	.field [ .name user-id .type binary ]
 	.field [ .name svc-container .type svc-container ]
