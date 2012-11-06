@@ -25,7 +25,5 @@
 
 -define(set_pname(PName), erlang:put(p_name, PName)).
 -define(set_pname_fmt(Fmt, Params), erlang:put(p_name, lists:flatten(io_lib:format(Fmt, [Params])))).
--define(set_pname(Fmt, OID), erlang:put(p_name, lists:flatten(io_lib:format(Fmt, [uuid:to_string(OID)])))).
--define(set_pname(Fmt, OID, Params), erlang:put(p_name, lists:flatten(io_lib:format(Fmt, [uuid:to_string(OID) | Params])))).
 
 -endif. % logging_hrl

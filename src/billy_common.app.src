@@ -6,8 +6,7 @@
 		kernel,
 		stdlib,
 		piqi,
-		lager,
-		uuid
+		lager
 	]},
 	{mod, {billy_common_app, []}},
 	{env, []}
