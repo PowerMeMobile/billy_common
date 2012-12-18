@@ -21,7 +21,7 @@
 % % % % States description  % % % % % % % % % % % % % % % % % % % % % % %
 
 % State {negotiating}:
-% 	The Client is awaiting for #hello from Server.
+% 	The Client is waiting for #hello from Server.
 % 	Server MUST report the timeout it is going to wait till #bind_request
 %	comes from Client (#hello.bind_request_timeout).
 %
