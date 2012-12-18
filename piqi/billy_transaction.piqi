@@ -20,17 +20,17 @@
 
 % Server is waiting for #reserve-request from Client.
 %
-% Client MUST set the fields transaction ID (#reserve-request.transaction-id),
+% Client MUST set the fields transaction IDx (#reserve-request.transaction-idx),
 % client type (#reserve-request.client-type), customer ID (#reserve-request.customer-id),
 % user ID (#reserve-request.user-id), container for reserving (#reserve-request.svc-container).
 % Client MAY set #reserve-request.timeout.
-% Transaction ID is a sequentially growing integer number unique within the particular session.
-% Thus any particular transaction is globally identified by a tuple - {SessionID, TransactionID}
+% Transaction IDx is a sequentially growing integer number unique within the particular session.
+% Thus any particular transaction is globally identified by a tuple - {SessionID, TransactionIDx}
 
 % Once Server gets #reserve-request from Client, it MUST create new transaction process,
 % send #reserve-response to Client and go to state {reserved}.
 % Server MUST report result of reserving (#reserve-response.result) to Client.
-% Server MUST set the field transaction ID (#reserve-response.transaction-id).
+% Server MUST set the field transaction IDx (#reserve-response.transaction-idx).
 %
 % Server MUST report timeout to Client (#reserve-response.timeout).
 % Server MUST set timeout to Client value (#reserve-request.timeout)
@@ -47,8 +47,8 @@
 % or '#rollback-request').
 %
 % Client SHOULD send #rollback-request or #commit-request within the timeout.
-% Client MUST set field transaction ID
-% (#rollback-request.transaction-id or #commit-request.transaction-id).
+% Client MUST set field transaction IDx
+% (#rollback-request.transaction-idx or #commit-request.transaction-idx).
 %
 % The Server MUST send response #commit-response or
 % #rollback-response respectively.
@@ -71,7 +71,7 @@
 % % % RESERVE-REQUEST % % %
 .record [
 	.name reserve-request
-	.field [ .name transaction-id .type int ]
+	.field [ .name transaction-idx .type int ]
 	.field [ .name client-type .type binary ]
 	.field [ .name customer-id .type binary ]
 	.field [ .name user-id .type binary ]
@@ -98,7 +98,7 @@
 % % % RESERVE-RESPONSE % % %
 .record [
 	.name reserve-response
-	.field [ .name transaction-id .type int ]
+	.field [ .name transaction-idx .type int ]
 	.field [ .name result .type reserve-result ]
 	.field [ .name timeout .type int ] % [ms]
 ]
@@ -112,13 +112,13 @@
 % % % COMMIT-REQUEST % % %
 .record [
 	.name commit-request
-	.field [ .name transaction-id .type int ]
+	.field [ .name transaction-idx .type int ]
 ]
 
 % % % COMMIT-RESPONSE % % %
 .record [
 	.name commit-response
-	.field [ .name transaction-id .type int ]
+	.field [ .name transaction-idx .type int ]
 	.field [ .name result .type commit-result ]
 ]
 	.variant [
@@ -130,13 +130,13 @@
 % % % ROLLBACK-REQUEST % % %
 .record [
 	.name rollback-request
-	.field [ .name transaction-id .type int ]
+	.field [ .name transaction-idx .type int ]
 ]
 
 % % % ROLLBACK-RESPONSE % % %
 .record [
 	.name rollback-response
-	.field [ .name transaction-id .type int ]
+	.field [ .name transaction-idx .type int ]
 	.field [ .name result .type rollback-result ]
 ]
 	.variant [
@@ -148,5 +148,5 @@
 % % % TIMEOUT % % %
 .record [
 	.name timeout
-	.field [ .name transaction-id .type int ]
+	.field [ .name transaction-idx .type int ]
 ]
