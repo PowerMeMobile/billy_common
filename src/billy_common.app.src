@@ -6,7 +6,8 @@
 		kernel,
 		stdlib,
 		piqi,
-		lager
+		lager,
+		gproc
 	]},
 	{mod, {billy_common_app, []}},
 	{env, []}
