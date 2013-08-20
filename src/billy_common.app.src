@@ -7,7 +7,8 @@
 		stdlib,
 		piqi,
 		lager,
-		gproc
+		gproc,
+		alley_common
 	]},
 	{mod, {billy_common_app, []}},
 	{env, []}
