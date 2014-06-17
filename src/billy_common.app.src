@@ -1,15 +1,15 @@
 {application, billy_common, [
-	{description, "Billy Shared client and server components"},
-	{vsn, "0.1.0"},
-	{registered, []},
-	{applications, [
-		kernel,
-		stdlib,
-		piqi,
-		lager,
-		gproc,
-		alley_common
-	]},
-	{mod, {billy_common_app, []}},
-	{env, []}
+    {description, "Billy Shared client and server components"},
+    {vsn, "0.1.0"},
+    {registered, []},
+    {applications, [
+        kernel,
+        stdlib,
+        piqi,
+        lager,
+        gproc,
+        alley_common
+    ]},
+    {mod, {billy_common_app, []}},
+    {env, []}
 ]}.
